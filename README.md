@@ -1,4 +1,4 @@
-# GenRec Benchmark Datasets
+# Generative Recommendation Benchmark Datasets
 
 ## Introduction
 
