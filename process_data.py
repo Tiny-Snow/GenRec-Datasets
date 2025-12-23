@@ -62,11 +62,16 @@ if __name__ == "__main__":
         default=None,
         help="The number of users to sample from the dataset.",
     )
+    parser.add_argument(
+        "--meta-available",
+        action="store_true",
+        help="If set, process item titles from meta file.",
+    )
     args = parser.parse_args()
     if args.dataset_type == "amazon":
         processor = process_data.AmazonDatasetProcessor(
             dataset_dir=args.dataset_dir,
-            meta_available=True,
+            meta_available=args.meta_available,
             k_core=args.k_core,
             sample_user_size=args.sample_user_size,
         )
