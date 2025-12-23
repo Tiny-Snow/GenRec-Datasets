@@ -158,10 +158,30 @@ class AmazonDatasetProcessor(BaseDatasetProcessor):
                 ``False``, the second element will be ``None``.
         """
         raw_dir = os.path.join(self.dataset_dir, "raw")
-        interactions = read_json(
-            os.path.join(raw_dir, f"reviews_{self.dataset_name}.json"),
-            selected_cols=["reviewerID", "asin", "unixReviewTime"],
-        )
+        review_json = os.path.join(raw_dir, f"reviews_{self.dataset_name}.json")
+        review_csv = os.path.join(raw_dir, f"reviews_{self.dataset_name}.csv")
+
+        if os.path.exists(review_csv):
+            if self._version == 2018:
+                df = pd.read_csv(
+                    review_csv,
+                    header=None,
+                    names=["asin", "reviewerID", "overall", "unixReviewTime"],
+                )
+                interactions = df[["reviewerID", "asin", "unixReviewTime"]].dropna()
+            else:
+                df = pd.read_csv(
+                    review_csv,
+                    header=None,
+                    names=["reviewerID", "asin", "overall", "unixReviewTime"],
+                )
+                interactions = df[["reviewerID", "asin", "unixReviewTime"]].dropna()
+        else:
+            # JSON 回退
+            interactions = read_json(
+                review_json,
+                selected_cols=["reviewerID", "asin", "unixReviewTime"],
+            )
         interactions.columns = ["UserID", "ItemID", "Timestamp"]
         if self.meta_available:
             item2title = read_json(
